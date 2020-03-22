@@ -6,19 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://ccmuyu.github.io">
-  <title>Tag: JDK源码精读 | Thank you for visiting!</title>
+  <title>apollo架构 | Thank you for visiting!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一颗不服输的螺丝钉">
-<meta name="keywords" content="生命不息，奋斗不止">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Thank you for visiting!">
-<meta property="og:url" content="https://ccmuyu.github.io/tags/JDK源码精读/index.html">
+  <meta name="description" content="apollo简介前端公司项目需要，由传统的静态打包配置切换到了动态配置中心，在此总结一些使用心得。 github项目地址： apollo  理论还是要了解的，有助于快速理解整体架构。这里主要从架构和客户端使用原理入手 架构原理引用作者的架构图：">
+<meta name="keywords" content="apollo,动态配置中心">
+<meta property="og:type" content="article">
+<meta property="og:title" content="apollo架构">
+<meta property="og:url" content="https://ccmuyu.github.io/2020/03/22/apollo架构/index.html">
 <meta property="og:site_name" content="Thank you for visiting!">
-<meta property="og:description" content="一颗不服输的螺丝钉">
+<meta property="og:description" content="apollo简介前端公司项目需要，由传统的静态打包配置切换到了动态配置中心，在此总结一些使用心得。 github项目地址： apollo  理论还是要了解的，有助于快速理解整体架构。这里主要从架构和客户端使用原理入手 架构原理引用作者的架构图：">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_by_songshun-1528302390687.png">
+<meta property="og:image" content="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_arch_v1-1528302391929.png">
+<meta property="og:image" content="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_arch_v5-1528302391563.png">
+<meta property="og:updated_time" content="2020-03-22T12:00:33.799Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Thank you for visiting!">
-<meta name="twitter:description" content="一颗不服输的螺丝钉">
+<meta name="twitter:title" content="apollo架构">
+<meta name="twitter:description" content="apollo简介前端公司项目需要，由传统的静态打包配置切换到了动态配置中心，在此总结一些使用心得。 github项目地址： apollo  理论还是要了解的，有助于快速理解整体架构。这里主要从架构和客户端使用原理入手 架构原理引用作者的架构图：">
+<meta name="twitter:image" content="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_by_songshun-1528302390687.png">
   
     <link rel="alternative" href="/atom.xml" title="Thank you for visiting!" type="application/atom+xml">
   
@@ -150,98 +155,262 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-apollo架构" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/27/JDK源码精读系列（一）/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/27/JDK源码精读系列（一）/">JDK源码精读(一)</a>
+    <h1 class="article-title" itemprop="name">
+      apollo架构
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2020/03/22/apollo架构/" class="archive-article-date">
+  	<time datetime="2020-03-22T08:58:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="apollo简介"><a href="#apollo简介" class="headerlink" title="apollo简介"></a>apollo简介</h1><pre><code>前端公司项目需要，由传统的静态打包配置切换到了动态配置中心，在此总结一些使用心得。
+</code></pre><p>github项目地址： <a href="https://github.com/ctripcorp/apollo" target="_blank" rel="noopener">apollo</a> </p>
+<p>理论还是要了解的，有助于快速理解整体架构。这里主要从架构和客户端使用原理入手</p>
+<h1 id="架构原理"><a href="#架构原理" class="headerlink" title="架构原理"></a>架构原理</h1><p>引用作者的架构图：</p>
+<a id="more"></a>
+<p><img src="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_by_songshun-1528302390687.png" alt="img"></p>
+<h3 id="四个核心模块及其主要功能"><a href="#四个核心模块及其主要功能" class="headerlink" title="四个核心模块及其主要功能"></a>四个核心模块及其主要功能</h3><ol>
+<li>ConfigService</li>
+</ol>
+<ul>
+<li>提供配置获取接口</li>
+<li>提供配置推送接口</li>
+<li>服务于Apollo客户端</li>
+</ul>
+<ol start="2">
+<li>AdminService</li>
+</ol>
+<ul>
+<li>提供配置管理接口</li>
+<li>提供配置修改发布接口</li>
+<li>服务于管理界面Portal</li>
+</ul>
+<ol start="3">
+<li>Client</li>
+</ol>
+<ul>
+<li>为应用获取配置，支持实时更新</li>
+<li>通过MetaServer获取ConfigService的服务列表</li>
+<li>使用客户端软负载SLB方式调用ConfigService</li>
+</ul>
+<ol start="4">
+<li>Portal</li>
+</ol>
+<ul>
+<li>配置管理界面</li>
+<li>通过MetaServer获取AdminService的服务列表</li>
+<li>使用客户端软负载SLB方式调用AdminService</li>
+</ul>
+<h3 id="三个辅助服务发现模块"><a href="#三个辅助服务发现模块" class="headerlink" title="三个辅助服务发现模块"></a>三个辅助服务发现模块</h3><ol>
+<li>Eureka</li>
+</ol>
+<ul>
+<li>用于服务发现和注册</li>
+<li>Config/AdminService注册实例并定期报心跳</li>
+<li>和ConfigService住在一起部署</li>
+</ul>
+<ol start="2">
+<li>MetaServer</li>
+</ol>
+<ul>
+<li>Portal通过域名访问MetaServer获取AdminService的地址列表</li>
+<li>Client通过域名访问MetaServer获取ConfigService的地址列表</li>
+<li>相当于一个Eureka Proxy</li>
+<li>逻辑角色，和ConfigService住在一起部署</li>
+</ul>
+<ol start="3">
+<li>NginxLB</li>
+</ol>
+<ul>
+<li>和域名系统配合，协助Portal访问MetaServer获取AdminService地址列表</li>
+<li>和域名系统配合，协助Client访问MetaServer获取ConfigService地址列表</li>
+<li>和域名系统配合，协助用户访问Portal进行配置管理</li>
+</ul>
+<p>简易架构图：</p>
+<p><img src="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_arch_v1-1528302391929.png" alt="img"></p>
+<p>要点：</p>
+<ol>
+<li>ConfigService是一个独立的微服务，服务于Client进行配置获取。</li>
+<li>Client和ConfigService保持长连接，通过一种拖拉结合(push &amp; pull)的模式，实现配置实时更新的同时，保证配置更新不丢失。</li>
+<li>AdminService是一个独立的微服务，服务于Portal进行配置管理。Portal通过调用AdminService进行配置管理和发布。</li>
+<li>ConfigService和AdminService共享ConfigDB，ConfigDB中存放项目在某个环境的配置信息。ConfigService/AdminService/ConfigDB三者在每个环境(DEV/FAT/UAT/PRO)中都要部署一份。</li>
+<li>Protal有一个独立的PortalDB，存放用户权限、项目和配置的元数据信息。Protal只需部署一份，它可以管理多套环境。</li>
+</ol>
+<p><strong>V5 版本架构图示：</strong></p>
+<p><img src="https://res.infoq.com/articles/ctrip-apollo-configuration-center-architecture/zh/resources/1apollo_arch_v5-1528302391563.png" alt="img"></p>
+<h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><p>客户端</p>
+<p>spring接入：<br>$$<br>http\://<a href="http://www.ctrip.com/schema/apollo=com.ctrip.framework.apollo.spring.config.NamespaceHandler" target="_blank" rel="noopener">www.ctrip.com/schema/apollo=com.ctrip.framework.apollo.spring.config.NamespaceHandler</a><br>$$<br>spring boot接入：<br>$$<br>org.springframework.boot.autoconfigure.EnableAutoConfiguration=\<br>com.ctrip.framework.apollo.spring.boot.ApolloAutoConfiguration<br>org.springframework.context.ApplicationContextInitializer=\<br>com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer<br>org.springframework.boot.env.EnvironmentPostProcessor=\<br>com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer<br>$$</p>
+<p>以spring使用为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NamespaceHandler</span> <span class="keyword">extends</span> <span class="title">NamespaceHandlerSupport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Splitter NAMESPACE_SPLITTER = Splitter.on(<span class="string">","</span>).omitEmptyStrings().trimResults();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="comment">//解析器注册，支持apollo的xml标签</span></span><br><span class="line">        registerBeanDefinitionParser(<span class="string">"config"</span>, <span class="keyword">new</span> BeanParser());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//xml解析器</span></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanParser</span> <span class="keyword">extends</span> <span class="title">AbstractSingleBeanDefinitionParser</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> Class&lt;?&gt; getBeanClass(Element element) &#123;</span><br><span class="line">            <span class="comment">//属性</span></span><br><span class="line">            <span class="keyword">return</span> ConfigPropertySourcesProcessor.class;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">shouldGenerateId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doParse</span><span class="params">(Element element, BeanDefinitionBuilder builder)</span> </span>&#123;</span><br><span class="line">            String namespaces = element.getAttribute(<span class="string">"namespaces"</span>);</span><br><span class="line">            <span class="comment">//default to application</span></span><br><span class="line">            <span class="keyword">if</span> (Strings.isNullOrEmpty(namespaces)) &#123;</span><br><span class="line">            <span class="comment">//所以默认会处理application配置</span></span><br><span class="line">                namespaces = ConfigConsts.NAMESPACE_APPLICATION;</span><br><span class="line">            &#125;</span><br><span class="line">			<span class="comment">//优先级</span></span><br><span class="line">            <span class="keyword">int</span> order = Ordered.LOWEST_PRECEDENCE;</span><br><span class="line">            String orderAttribute = element.getAttribute(<span class="string">"order"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!Strings.isNullOrEmpty(orderAttribute)) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    order = Integer.parseInt(orderAttribute);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                            String.format(<span class="string">"Invalid order: %s for namespaces: %s"</span>, orderAttribute, namespaces));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            PropertySourcesProcessor.addNamespaces(NAMESPACE_SPLITTER.splitToList(namespaces), order);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NamespaceHandlerSupport 是spring xml配置的解析抽象类，解析结果为BeanDefinition，这是spring bean实例的描述类，描述信息包含类的构造器，成员变量等</p>
+<p>ConfigPropertySourcesProcessor ：将加载的BeanDefinition 处理，apollo拦截了spring bean的注册过程，所以在获取到apollo配置的属性值后，最终完成向容器注册的过程。</p>
+<p>以下是初始化启动时的的配置过程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BeanRegistrationUtil</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">        BeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(beanClass).getBeanDefinition();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (extraPropertyValues != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Map.Entry&lt;String, Object&gt; entry : extraPropertyValues.entrySet()) &#123;</span><br><span class="line">                beanDefinition.getPropertyValues().add(entry.getKey(), entry.getValue());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        registry.registerBeanDefinition(beanName, beanDefinition);</span><br></pre></td></tr></table></figure>
+<p>动态配置中心最重要是就是支持配置信息的实时变化，apollo在启动时通过spi，注入以下实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.ctrip.framework.apollo.internals.DefaultInjector</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultInjector</span> <span class="keyword">implements</span> <span class="title">Injector</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> com.google.inject.Injector m_injector;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DefaultInjector</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m_injector = Guice.createInjector(<span class="keyword">new</span> ApolloModule());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">            ApolloConfigException exception = <span class="keyword">new</span> ApolloConfigException(<span class="string">"Unable to initialize Guice Injector!"</span>, ex);</span><br><span class="line">            Tracer.logError(exception);</span><br><span class="line">            <span class="keyword">throw</span> exception;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// 省略。。。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ApolloModule</span> <span class="keyword">extends</span> <span class="title">AbstractModule</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            bind(ConfigManager.class).to(DefaultConfigManager.class).in(Singleton.class);</span><br><span class="line">            bind(ConfigFactoryManager.class).to(DefaultConfigFactoryManager.class).in(Singleton.class);</span><br><span class="line">            bind(ConfigRegistry.class).to(DefaultConfigRegistry.class).in(Singleton.class);</span><br><span class="line">            bind(ConfigFactory.class).to(DefaultConfigFactory.class).in(Singleton.class);</span><br><span class="line">            bind(ConfigUtil.class).in(Singleton.class);</span><br><span class="line">            bind(HttpUtil.class).in(Singleton.class);</span><br><span class="line">            bind(ConfigServiceLocator.class).in(Singleton.class);</span><br><span class="line">            <span class="comment">//这个长轮询服务就是监听远程仓库的配置信息变化</span></span><br><span class="line">            bind(RemoteConfigLongPollService.class).in(Singleton.class);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>长轮询服务源码实现如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doLongPollingRefresh</span><span class="params">(String appId, String cluster, String dataCenter)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Random random = <span class="keyword">new</span> Random();</span><br><span class="line">    ServiceDTO lastServiceDto = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">while</span> (!m_longPollingStopped.get() &amp;&amp; !Thread.currentThread().isInterrupted()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!m_longPollRateLimiter.tryAcquire(<span class="number">5</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">            <span class="comment">//wait at most 5 seconds</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="comment">//省略。。。</span></span><br><span class="line">            HttpRequest request = <span class="keyword">new</span> HttpRequest(url);</span><br><span class="line">            request.setReadTimeout(LONG_POLLING_READ_TIMEOUT);</span><br><span class="line"></span><br><span class="line">            transaction.addData(<span class="string">"Url"</span>, url);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> HttpResponse&lt;List&lt;ApolloConfigNotification&gt;&gt; response =</span><br><span class="line">                    m_httpUtil.doGet(request, m_responseType);</span><br><span class="line"></span><br><span class="line">            logger.debug(<span class="string">"Long polling response: &#123;&#125;, url: &#123;&#125;"</span>, response.getStatusCode(), url);</span><br><span class="line">            <span class="keyword">if</span> (response.getStatusCode() == <span class="number">200</span> &amp;&amp; response.getBody() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">//更新本地bean的spring value</span></span><br><span class="line">                updateNotifications(response.getBody());</span><br><span class="line">                updateRemoteNotifications(response.getBody());</span><br><span class="line">                transaction.addData(<span class="string">"Result"</span>, response.getBody().toString());</span><br><span class="line">                notify(lastServiceDto, response.getBody());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//try to load balance</span></span><br><span class="line">            <span class="keyword">if</span> (response.getStatusCode() == <span class="number">304</span> &amp;&amp; random.nextBoolean()) &#123;</span><br><span class="line">                lastServiceDto = <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            m_longPollFailSchedulePolicyInSecond.success();</span><br><span class="line">         <span class="comment">//省略。。。。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当长轮询收到配置变更之后，触发本地与远程的同步任务</p>
+<p>com.ctrip.framework.apollo.internals.RemoteConfigRepository#sync</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sync</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Transaction transaction = Tracer.newTransaction(<span class="string">"Apollo.ConfigService"</span>, <span class="string">"syncRemoteConfig"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ApolloConfig previous = m_configCache.get();</span><br><span class="line">        ApolloConfig current = loadApolloConfig();</span><br><span class="line">		<span class="comment">//虽然304不会更新通知，但是每次更新后会缓存在本地，这里仅作安全验证</span></span><br><span class="line">        <span class="comment">//reference equals means HTTP 304</span></span><br><span class="line">        <span class="keyword">if</span> (previous != current) &#123;</span><br><span class="line">            logger.debug(<span class="string">"Remote Config refreshed!"</span>);</span><br><span class="line">            m_configCache.set(current);</span><br><span class="line">            <span class="keyword">this</span>.fireRepositoryChange(m_namespace, <span class="keyword">this</span>.getConfig());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (current != <span class="keyword">null</span>) &#123;</span><br><span class="line">            Tracer.logEvent(String.format(<span class="string">"Apollo.Client.Configs.%s"</span>, current.getNamespaceName()),</span><br><span class="line">                    current.getReleaseKey());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        transaction.setStatus(Transaction.SUCCESS);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">        transaction.setStatus(ex);</span><br><span class="line">        <span class="keyword">throw</span> ex;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        transaction.complete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3种spring value 变更事件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigFileChangeEvent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String namespace;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String oldValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String newValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PropertyChangeType changeType;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//2</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigChangeEvent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String m_namespace;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, ConfigChange&gt; m_changes;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//3</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigChange</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String namespace;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String propertyName;</span><br><span class="line">    <span class="keyword">private</span> String oldValue;</span><br><span class="line">    <span class="keyword">private</span> String newValue;</span><br><span class="line">    <span class="keyword">private</span> PropertyChangeType changeType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>处理spring value值变更</p>
+<p>com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChange</span><span class="params">(ConfigChangeEvent changeEvent)</span> </span>&#123;</span><br><span class="line">    Set&lt;String&gt; keys = changeEvent.changedKeys();</span><br><span class="line">    <span class="keyword">if</span> (CollectionUtils.isEmpty(keys)) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (String key : keys) &#123;</span><br><span class="line">        <span class="comment">//这里的对于spring容器的bean处理非常精髓，每个IOC容器作为map的一个value，同时每一个key对应的所有bean实例value引用</span></span><br><span class="line">        <span class="comment">// 1. check whether the changed key is relevant</span></span><br><span class="line">        Collection&lt;SpringValue&gt; targetValues = springValueRegistry.get(beanFactory, key);</span><br><span class="line">        <span class="keyword">if</span> (targetValues == <span class="keyword">null</span> || targetValues.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. check whether the value is really changed or not (since spring property sources have hierarchies)</span></span><br><span class="line">        <span class="keyword">if</span> (!shouldTriggerAutoUpdate(changeEvent, key)) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. update the value</span></span><br><span class="line">        <span class="keyword">for</span> (SpringValue val : targetValues) &#123;</span><br><span class="line">            updateSpringValue(val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新字段和方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Object newVal)</span> <span class="keyword">throws</span> IllegalAccessException, InvocationTargetException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isField()) &#123;</span><br><span class="line">            injectField(newVal);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            injectMethod(newVal);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">injectField</span><span class="params">(Object newVal)</span> <span class="keyword">throws</span> IllegalAccessException </span>&#123;</span><br><span class="line">        Object bean = beanRef.get();</span><br><span class="line">        <span class="keyword">if</span> (bean == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">boolean</span> accessible = field.isAccessible();</span><br><span class="line">        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        field.set(bean, newVal);</span><br><span class="line">        field.setAccessible(accessible);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>至此对于apollo客户端的实现基本结束了，上面列出的代码是配置变更的核心实现，可以看出确实逻辑相对简单，实现也很巧妙，最适合新手入门的中间件我是认可的。</p>
+<h1 id="使用指南："><a href="#使用指南：" class="headerlink" title="使用指南："></a>使用指南：</h1><p>apollo架构相比其他中间件而言，没有使用太多高深技巧，正如官网上所说的这可能是最适合初学者通过源码来学习的分布式中间件产品</p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>参见github官网wiki</p>
+<p><a href="https://github.com/ctripcorp/apollo/wiki/Java客户端使用指南" target="_blank" rel="noopener">客户端wiki</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">JDK源码精读</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">apollo</a>
         		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/27/JDK源码精读系列（二）/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/27/JDK源码精读系列（二）/">JDK源码精读(二)</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
+      		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">JDK源码精读</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">动态配置中心</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://ccmuyu.github.io/2020/03/22/apollo架构/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/05/27/dubbo源码精读（一）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">dubbo源码精读</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#apollo简介"><span class="toc-number">1.</span> <span class="toc-text">apollo简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#架构原理"><span class="toc-number">2.</span> <span class="toc-text">架构原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#四个核心模块及其主要功能"><span class="toc-number">2.0.1.</span> <span class="toc-text">四个核心模块及其主要功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三个辅助服务发现模块"><span class="toc-number">2.0.2.</span> <span class="toc-text">三个辅助服务发现模块</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码解析"><span class="toc-number">3.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用指南："><span class="toc-number">4.</span> <span class="toc-text">使用指南：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">4.1.</span> <span class="toc-text">客户端</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -264,9 +433,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
