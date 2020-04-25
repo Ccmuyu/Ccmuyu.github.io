@@ -6,22 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://ccmuyu.github.io">
-  <title>dubbo源码精读 | Thank you for visiting!</title>
+  <title>线上排查之--arthas | Thank you for visiting!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
-<meta name="keywords" content="生命不息，奋斗不止">
+  <meta name="description" content="前言作为一名java 的coder，线上问题的排查是始终绕不过去的坎儿，项目大了，或者项目经手的人多了，很难说哪个地方会不会有个隐形的陷阱等着你。很多问题也只有项目的流量上来了才会发现，好了，废话不多说，上干货！ 常用工具toptop这个命令除了运维，一般的coder知道的或许并不多。 这个命令有什么用呢？看效果： 12345678910111213[root@VM_0_15_centos ~]#">
+<meta name="keywords" content="线上运维,JVM监控">
 <meta property="og:type" content="article">
-<meta property="og:title" content="dubbo源码精读">
-<meta property="og:url" content="https://ccmuyu.github.io/2019/05/27/dubbo源码精读（一）/index.html">
+<meta property="og:title" content="线上排查之--arthas">
+<meta property="og:url" content="https://ccmuyu.github.io/2020/04/25/线上排查之-arthas/index.html">
 <meta property="og:site_name" content="Thank you for visiting!">
-<meta property="og:description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
+<meta property="og:description" content="前言作为一名java 的coder，线上问题的排查是始终绕不过去的坎儿，项目大了，或者项目经手的人多了，很难说哪个地方会不会有个隐形的陷阱等着你。很多问题也只有项目的流量上来了才会发现，好了，废话不多说，上干货！ 常用工具toptop这个命令除了运维，一般的coder知道的或许并不多。 这个命令有什么用呢？看效果： 12345678910111213[root@VM_0_15_centos ~]#">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://ccmuyu.github.io/img/dubbo/dir.png">
-<meta property="og:updated_time" content="2020-03-22T07:11:58.627Z">
+<meta property="og:updated_time" content="2020-04-25T10:20:28.830Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="dubbo源码精读">
-<meta name="twitter:description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
-<meta name="twitter:image" content="https://ccmuyu.github.io/img/dubbo/dir.png">
+<meta name="twitter:title" content="线上排查之--arthas">
+<meta name="twitter:description" content="前言作为一名java 的coder，线上问题的排查是始终绕不过去的坎儿，项目大了，或者项目经手的人多了，很难说哪个地方会不会有个隐形的陷阱等着你。很多问题也只有项目的流量上来了才会发现，好了，废话不多说，上干货！ 常用工具toptop这个命令除了运维，一般的coder知道的或许并不多。 这个命令有什么用呢？看效果： 12345678910111213[root@VM_0_15_centos ~]#">
   
     <link rel="alternative" href="/atom.xml" title="Thank you for visiting!" type="application/atom+xml">
   
@@ -163,62 +161,162 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-dubbo源码精读（一）" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-线上排查之-arthas" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      dubbo源码精读
+      线上排查之--arthas
     </h1>
   
 
         
-        <a href="/2019/05/27/dubbo源码精读（一）/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
+        <a href="/2020/04/25/线上排查之-arthas/" class="archive-article-date">
+  	<time datetime="2020-04-25T08:42:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="dubbo源码精读（一）"><a href="#dubbo源码精读（一）" class="headerlink" title="dubbo源码精读（一）"></a>dubbo源码精读（一）</h1><p>dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步：</p>
-<p>关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo:</p>
-<p>dubbo的底层原理：<a href="https://blog.csdn.net/qq_33101675/article/details/78701305" target="_blank" rel="noopener">https://blog.csdn.net/qq_33101675/article/details/78701305</a>    </p>
-<p>下图为我在项目中的dubbo2.5.3jar包目录结构</p>
-<p><img src="/img/dubbo/dir.png" alt="dubbo目录"></p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>作为一名java 的coder，线上问题的排查是始终绕不过去的坎儿，项目大了，或者项目经手的人多了，很难说哪个地方会不会有个隐形的陷阱等着你。很多问题也只有项目的流量上来了才会发现，好了，废话不多说，上干货！</p>
+<h1 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h1><h2 id="top"><a href="#top" class="headerlink" title="top"></a>top</h2><p>top这个命令除了运维，一般的coder知道的或许并不多。</p>
+<p>这个命令有什么用呢？看效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_15_centos ~]# top</span><br><span class="line">top - 16:50:54 up 18:28,  3 users,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:  87 total,   2 running,  85 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  1882056 total,   314288 free,   320940 used,  1246828 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.  1377012 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                          </span><br><span class="line">    1 root      20   0   43520   3736   2420 S  0.0  0.2   0:04.16 systemd                          </span><br><span class="line">    2 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kthreadd                         </span><br><span class="line">    4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H                     </span><br><span class="line">    5 root      20   0       0      0      0 S  0.0  0.0   0:04.94 kworker/u2:0                     </span><br><span class="line">    6 root      20   0       0      0      0 S  0.0  0.0   0:00.84 ksoftirqd/0</span><br></pre></td></tr></table></figure>
+<p>从实际结果来看，这里分为了两部分：</p>
+<p>1、系统信息。包括：运行时间，用户，负载，CPU，内存等</p>
+<p>2、线程信息。主要有：线程pid，用户，CPU内存资源使用，所属程序等</p>
+<h2 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h2><p>用法：jinfo [pid]</p>
+<p>显示java程序运行时，所有的系统参数</p>
+<h2 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h2><p>动态观察jvm运行状况</p>
+<p>比如 jstat -gc pid 监控gc情况</p>
+<h2 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h2><p>堆内存查看，可以做堆内存转储，形成dump文件。</p>
+<p>比如：</p>
+<p>jmap - histo 4655 | head -20，查找有多少对象产生</p>
+<p>jmap -dump:format=b,file=xxx pid  </p>
+<p>，jmap执行期间会对进程产生很大影响，甚至卡顿，大流量系统是不合适的。</p>
+<p>可以使用 <strong>MAT</strong> / <strong>jhat</strong> /<strong>jvisualvm</strong> 进行dump文件分析</p>
+<p>这些工具平时开发测试会用到的比较多，但是线上，除了top命令之外，其他可能都没有（openjdk只安装jre是没有的），就算有不能用！！！</p>
+<h1 id="arthas"><a href="#arthas" class="headerlink" title="arthas"></a>arthas</h1><p>正题来了，arthas，阿里开源产品，是个命令行交互工具，本身是一个jar，下载下来就能用（生产环境不一定有权限加进去，允悲！！！）</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> gitee / github</span></span><br><span class="line">[root@VM_0_15_centos arthas]# wget https:/sh/arthas.gitee.io/arthas-boot.jar</span><br><span class="line">--2020-04-25 16:25:19--  https://arthas.gitee.io/arthas-boot.jar</span><br><span class="line">Resolving arthas.gitee.io (arthas.gitee.io)... 212.64.62.174</span><br><span class="line">Connecting to arthas.gitee.io (arthas.gitee.io)|212.64.62.174|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 112288 (110K) [application/java-archive]</span><br><span class="line">Saving to: ‘arthas-boot.jar’</span><br><span class="line"></span><br><span class="line"><span class="meta">100%</span><span class="bash">[===========================================================&gt;] 112,288     --.-K/s   <span class="keyword">in</span> 0.1s    </span></span><br><span class="line"></span><br><span class="line">2020-04-25 16:25:20 (731 KB/s) - ‘arthas-boot.jar’ saved [112288/112288]</span><br></pre></td></tr></table></figure>
+<p>开源地址：<em><a href="https://github.com/alibaba/arthas" target="_blank" rel="noopener">https://github.com/alibaba/arthas</a></em></p>
+<p>官方文档：<em><a href="https://alibaba.github.io/arthas" target="_blank" rel="noopener">https://alibaba.github.io/arthas</a></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> github下载</span></span><br><span class="line">wget https://alibaba.github.io/arthas/arthas-boot.jar</span><br><span class="line"><span class="meta">#</span><span class="bash"> 或者 Gitee 下载</span></span><br><span class="line">wget https://arthas.gitee.io/arthas-boot.jar</span><br></pre></td></tr></table></figure>
+<p>安装如此简单。。。</p>
 <a id="more"></a>
-<h2 id="hession-包"><a href="#hession-包" class="headerlink" title="hession 包"></a>hession 包</h2><p>dubbo支持多种序列化方式，有dubbo、hessian、java、json、nativejava，（具体下文会介绍），hessian是dubbo默认的序列化方式。</p>
-<p>dubbo这里是直接使用hessian的一个开源实现放到了com.alibaba包下，也即是上图中的con.caucho.hessian包。这个包中主要是io包，hessian对于数据的序列化和反序列化所有实现全部在这里。其余两个包是RSA加密相关和工具类。有兴趣可以参考下，个人认为没有必要深究</p>
-<p>不出意外。序列化的顶级接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.com.caucho.hessian.io;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Serializing an object. </span><br><span class="line"> */</span><br><span class="line">public interface Serializer &#123;</span><br><span class="line">  public void writeObject(Object obj, AbstractHessianOutput out)</span><br><span class="line">    throws IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>hessian序列化的具体实现代码在com.alibaba.com.caucho.hessian.io.Hessian2Output中。这里不在展示源码和贴图，简单来说就是将（byte[]） 数组转换为二进制数据，并写入流中。反序列化则刚好相反，将二进制数据转化字符编码，进而转化为java的数据类型。</p>
-<p>反序列化的顶级接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.com.caucho.hessian.io;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Deserializing an object. </span><br><span class="line"> */</span><br><span class="line">public interface Deserializer &#123;</span><br><span class="line">  public Class getType();</span><br><span class="line"></span><br><span class="line">  public Object readObject(AbstractHessianInput in)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readList(AbstractHessianInput in, int length)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readLengthList(AbstractHessianInput in, int length)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readMap(AbstractHessianInput in)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readObject(AbstractHessianInput in, String []fieldNames)</span><br><span class="line">    throws IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="dubbo包"><a href="#dubbo包" class="headerlink" title="dubbo包"></a>dubbo包</h2><p>到这里，才是真正dubbo的核心实现。从前面的图中可以看到，dubbo的实现主要包含这些内容：</p>
-<ol>
-<li><p>cache：本地缓存，缓存服务列表</p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="方式1："><a href="#方式1：" class="headerlink" title="方式1："></a>方式1：</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 运行方式1，先运行，在选择 Java 进程 PID</span></span><br><span class="line">java -jar arthas-boot.jar</span><br><span class="line"><span class="meta">#</span><span class="bash"> 选择进程(输入[]内编号(不是PID)回车)</span></span><br><span class="line">[INFO] arthas-boot version: 3.1.4</span><br><span class="line">[INFO] Found existing java process, please choose one and hit RETURN.</span><br><span class="line">* [1]: 11616 com.Arthas</span><br><span class="line">  [2]: 8676</span><br><span class="line">  [3]: 16200 org.jetbrains.jps.cmdline.Launcher</span><br><span class="line">  [4]: 21032 org.jetbrains.idea.maven.server.RemoteMavenServer</span><br></pre></td></tr></table></figure>
+<h3 id="方式2："><a href="#方式2：" class="headerlink" title="方式2："></a>方式2：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar arthas-boot.jar [PID]</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_15_centos arthas]# java -jar arthas-boot.jar </span><br><span class="line">[INFO] arthas-boot version: 3.2.0</span><br><span class="line">[INFO] Can not find java process. Try to pass &lt;pid&gt; in command line.</span><br><span class="line">Please select an available pid.</span><br><span class="line">[root@VM_0_15_centos arthas]# java -jar arthas-boot.jar </span><br><span class="line">[INFO] arthas-boot version: 3.2.0</span><br><span class="line">[INFO] Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.</span><br><span class="line">* [1]: 19380 TestOOM</span><br><span class="line">1</span><br><span class="line">[INFO] Start download arthas from remote server: https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.2.0/arthas-packaging-3.2.0-bin.zip</span><br><span class="line">[INFO] Download arthas success.</span><br><span class="line">[INFO] arthas home: /root/.arthas/lib/3.2.0/arthas</span><br><span class="line">[INFO] Try to attach process 19380</span><br><span class="line">[INFO] Attach process 19380 success.</span><br><span class="line">[INFO] arthas-client connect 127.0.0.1 3658</span><br><span class="line">  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.                           </span><br><span class="line"> /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'                          </span><br><span class="line">|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.                          </span><br><span class="line">|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |                         </span><br><span class="line">`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'                          </span><br><span class="line">                                                                                </span><br><span class="line"></span><br><span class="line">wiki      https://alibaba.github.io/arthas                                      </span><br><span class="line">tutorials https://alibaba.github.io/arthas/arthas-tutorials                     </span><br><span class="line">version   3.2.0                                                                 </span><br><span class="line">pid       19380                                                                 </span><br><span class="line">time      2020-04-25 16:31:55                                                   </span><br><span class="line"></span><br><span class="line"><span class="meta">[arthas@19380]$</span><span class="bash"> session (b2791cc9-82d4-4431-a072-4fd991d0c791) is closed because session is inactive <span class="keyword">for</span> 30 min(s).</span></span><br></pre></td></tr></table></figure>
+<p>上面是我的操作过程。</p>
+<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2><p>每个操作都 -h查看帮助信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看运行的 java 进程信息</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> jps -mlvV </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 筛选 java 进程信息</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> jps -mlvV | grep [xxx]</span></span><br></pre></td></tr></table></figure>
+<p>贴一下其他的常用命令</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/dashboard.html" target="_blank" rel="noopener">dashboard</a></td>
+<td style="text-align:left">当前系统的实时数据面板</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/thread.html" target="_blank" rel="noopener"><strong>thread</strong></a></td>
+<td style="text-align:left">查看当前 JVM 的线程堆栈信息</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/watch.html" target="_blank" rel="noopener"><strong>watch</strong></a></td>
+<td style="text-align:left">方法执行数据观测</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><a href="https://alibaba.github.io/arthas/trace.html" target="_blank" rel="noopener">trace</a></strong></td>
+<td style="text-align:left">方法内部调用路径，并输出方法路径上的每个节点上耗时</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/stack.html" target="_blank" rel="noopener"><strong>stack</strong></a></td>
+<td style="text-align:left">输出当前方法被调用的调用路径</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/tt.html" target="_blank" rel="noopener"><strong>tt</strong></a></td>
+<td style="text-align:left">方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/monitor.html" target="_blank" rel="noopener">monitor</a></td>
+<td style="text-align:left">方法执行监控</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/jvm.html" target="_blank" rel="noopener">jvm</a></td>
+<td style="text-align:left">查看当前 JVM 信息</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/vmoption.html" target="_blank" rel="noopener">vmoption</a></td>
+<td style="text-align:left">查看，更新 JVM 诊断相关的参数</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/sc.html" target="_blank" rel="noopener">sc</a></td>
+<td style="text-align:left">查看 JVM 已加载的类信息</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/sm.html" target="_blank" rel="noopener">sm</a></td>
+<td style="text-align:left">查看已加载类的方法信息</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/jad.html" target="_blank" rel="noopener">jad</a></td>
+<td style="text-align:left">反编译指定已加载类的源码</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/classloader.html" target="_blank" rel="noopener">classloader</a></td>
+<td style="text-align:left">查看 classloader 的继承树，urls，类加载信息</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://alibaba.github.io/arthas/heapdump.html" target="_blank" rel="noopener">heapdump</a></td>
+<td style="text-align:left">类似 jmap 命令的 heap dump 功能</td>
+</tr>
+</tbody>
+</table>
+<h2 id="退出"><a href="#退出" class="headerlink" title="退出"></a>退出</h2><p>shutdown 命令，这个就不多说了</p>
+<p>也用可以通过</p>
+<h2 id="arthas能解决什么"><a href="#arthas能解决什么" class="headerlink" title="arthas能解决什么"></a>arthas能解决什么</h2><ul>
+<li><p>全局监控，dashboard （内存、cpu、GC、系统参数等）</p>
 </li>
-<li><p>common：资源工具类和注解等，包括io、日志、拓展类、JSON、线程池、各种工具类</p>
+<li><p>Thread监控</p>
+<ul>
+<li><p>线程信息、数量、执行状态等</p>
 </li>
-<li><p>config：dubbo配置的解析器，包括元注解、xml配置解析器及解析对象的定义，以下代码为xml解析的入口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.dubbo.config.spring.schema;</span><br><span class="line"></span><br><span class="line">import org.springframework.beans.factory.xml.NamespaceHandlerSupport;</span><br><span class="line"></span><br><span class="line">import com.alibaba.dubbo.common.Version;</span><br><span class="line">import com.alibaba.dubbo.config.ApplicationConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ConsumerConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ModuleConfig;</span><br><span class="line">import com.alibaba.dubbo.config.MonitorConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ProtocolConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ProviderConfig;</span><br><span class="line">import com.alibaba.dubbo.config.RegistryConfig;</span><br><span class="line">import com.alibaba.dubbo.config.spring.AnnotationBean;</span><br><span class="line">import com.alibaba.dubbo.config.spring.ReferenceBean;</span><br><span class="line">import com.alibaba.dubbo.config.spring.ServiceBean;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * DubboNamespaceHandler</span><br><span class="line"> * </span><br><span class="line"> * @author william.liangf</span><br><span class="line"> * @export</span><br><span class="line"> */</span><br><span class="line">public class DubboNamespaceHandler extends NamespaceHandlerSupport &#123;</span><br><span class="line"></span><br><span class="line">	static &#123;</span><br><span class="line">		Version.checkDuplicate(DubboNamespaceHandler.class);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void init() &#123;</span><br><span class="line">	    registerBeanDefinitionParser(&quot;application&quot;, new DubboBeanDefinitionParser(ApplicationConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;module&quot;, new DubboBeanDefinitionParser(ModuleConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;registry&quot;, new DubboBeanDefinitionParser(RegistryConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;monitor&quot;, new DubboBeanDefinitionParser(MonitorConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;provider&quot;, new DubboBeanDefinitionParser(ProviderConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;consumer&quot;, new DubboBeanDefinitionParser(ConsumerConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;protocol&quot;, new DubboBeanDefinitionParser(ProtocolConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;service&quot;, new DubboBeanDefinitionParser(ServiceBean.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;reference&quot;, new DubboBeanDefinitionParser(ReferenceBean.class, false));</span><br><span class="line">        registerBeanDefinitionParser(&quot;annotation&quot;, new DubboBeanDefinitionParser(AnnotationBean.class, true));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>线程池运行状况</p>
 </li>
-</ol>
-<ol start="4">
-<li><p>container：对spring、log4j、logback、servlet等的支持</p>
+<li><p><strong><em>死锁检测</em></strong> </p>
+<ul>
+<li><p>thread -b, 直接定位死锁的位置，</p>
 </li>
-<li><p>monitor：对provider、consumer的监控和数据统计，核心的实现在类DubboMonitor中</p>
+<li><p>jstack pid 来dump输出堆栈信息，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">"DubboServerHandler-192.168.10.26:12350-thread-200" #240 daemon prio=5 os_prio=0 tid=0x00007ffa7c141800 nid=0x6c89 waiting on condition [0x00007ffa17c7c000]</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">	at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">	- parking to wait <span class="keyword">for</span>  &lt;<span class="number">0x00000000e0d24020</span>&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br><span class="line">	at java.util.concurrent.locks.LockSupport.park(LockSupport.java:<span class="number">175</span>)</span><br><span class="line">	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:<span class="number">2039</span>)</span><br><span class="line">	at org.apache.commons.pool2.impl.LinkedBlockingDeque.takeFirst(LinkedBlockingDeque.java:<span class="number">590</span>)</span><br><span class="line">	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:<span class="number">441</span>)</span><br><span class="line">	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:<span class="number">362</span>)</span><br><span class="line">	at redis.clients.util.Pool.getResource(Pool.java:<span class="number">49</span>)</span><br><span class="line">	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:<span class="number">226</span>)</span><br><span class="line">	at (RedisHelper.java:<span class="number">322</span>)</span><br><span class="line">	at (RedisHelper.java:<span class="number">106</span>)</span><br><span class="line">	at BlockResourceManager.java:<span class="number">54</span>)</span><br><span class="line">	- locked &lt;<span class="number">0x00000000e0ec22d0</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到最后一条线程<code>locked &lt;0x00000000e0ec22d0&gt;</code>，说明它持有着这个锁，而其他线程状态都是<code>waiting to lock &lt;0x00000000e0ec22d0&gt;</code>。<br>看来就是这条线程导致了其他线程被阻塞。</p>
 </li>
-<li><p>registry：服务的注册与发现，其中服务支持redis和zookeeper两种，如果有需要也可以自己实现注册中心，实现registryService和注册工厂即可。zk的注册实现在ZookeeperRegistry中。这也是项目中最常用的注册中心</p>
+</ul>
 </li>
-<li><p>remoting：主要提供了一些远程通信的实现，包括http、p2p、telnet。还集成了zookeeper的客户端</p>
+</ul>
+<ul>
+<li><p>反编译</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 反编译只显示源码</span></span><br><span class="line">jad --source-only com.Arthas</span><br><span class="line"><span class="meta">#</span><span class="bash"> 反编译某个类的某个方法</span></span><br><span class="line">jad --source-only com.Arthas mysql</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>rpc：这是dubbo作为一个服务调用框架的核心功能。包含了对集群的处理、监听、通信协议、代理的实现、过滤器、rpc容器与调用等</p>
+<li><p>trace 跟踪</p>
+<p>跟踪执行过程，统计方法耗时等</p>
 </li>
-</ol>
-<p>今天就先到这里，后续对rpc继续写个专题。</p>
+<li><p>monitor命令监控统计方法执行情况</p>
+</li>
+<li><p>watch 查看输入输出参数以及异常信息</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最常用命令，dashboard、thread，合理运用工具，享受健康生活！！！</p>
 
       
 
@@ -227,6 +325,21 @@ var _hmt = _hmt || [];
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">线上运维</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JVM监控</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -277,7 +390,7 @@ var _hmt = _hmt || [];
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://ccmuyu.github.io/2019/05/27/dubbo源码精读（一）/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://ccmuyu.github.io/2020/04/25/线上排查之-arthas/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -291,18 +404,9 @@ var _hmt = _hmt || [];
   
 <nav id="article-nav">
   
-    <a href="/2019/05/27/JDK源码精读系列（二）/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          JDK源码精读(二)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/05/27/java中最常用的几种设计模式/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Java中的设计模式实践</div>
+    <a href="/2020/03/22/apollo架构/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">apollo架构</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -329,7 +433,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dubbo源码精读（一）"><span class="toc-number">1.</span> <span class="toc-text">dubbo源码精读（一）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hession-包"><span class="toc-number">1.1.</span> <span class="toc-text">hession 包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dubbo包"><span class="toc-number">1.2.</span> <span class="toc-text">dubbo包</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用工具"><span class="toc-number">2.</span> <span class="toc-text">常用工具</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#top"><span class="toc-number">2.1.</span> <span class="toc-text">top</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jinfo"><span class="toc-number">2.2.</span> <span class="toc-text">jinfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jstat"><span class="toc-number">2.3.</span> <span class="toc-text">jstat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jmap"><span class="toc-number">2.4.</span> <span class="toc-text">jmap</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#arthas"><span class="toc-number">3.</span> <span class="toc-text">arthas</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">3.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运行"><span class="toc-number">3.2.</span> <span class="toc-text">运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方式1："><span class="toc-number">3.2.1.</span> <span class="toc-text">方式1：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方式2："><span class="toc-number">3.2.2.</span> <span class="toc-text">方式2：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用操作"><span class="toc-number">3.3.</span> <span class="toc-text">常用操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#退出"><span class="toc-number">3.4.</span> <span class="toc-text">退出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#arthas能解决什么"><span class="toc-number">3.5.</span> <span class="toc-text">arthas能解决什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>

@@ -6,22 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://ccmuyu.github.io">
-  <title>dubbo源码精读 | Thank you for visiting!</title>
+  <title>Tag: JVM监控 | Thank you for visiting!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
+  <meta name="description" content="一颗不服输的螺丝钉">
 <meta name="keywords" content="生命不息，奋斗不止">
-<meta property="og:type" content="article">
-<meta property="og:title" content="dubbo源码精读">
-<meta property="og:url" content="https://ccmuyu.github.io/2019/05/27/dubbo源码精读（一）/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Thank you for visiting!">
+<meta property="og:url" content="https://ccmuyu.github.io/tags/JVM监控/index.html">
 <meta property="og:site_name" content="Thank you for visiting!">
-<meta property="og:description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
+<meta property="og:description" content="一颗不服输的螺丝钉">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://ccmuyu.github.io/img/dubbo/dir.png">
-<meta property="og:updated_time" content="2020-03-22T07:11:58.627Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="dubbo源码精读">
-<meta name="twitter:description" content="dubbo源码精读（一）dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步： 关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo: dubbo的底层原理：https://blog.csdn.net/qq_33101675/art">
-<meta name="twitter:image" content="https://ccmuyu.github.io/img/dubbo/dir.png">
+<meta name="twitter:title" content="Thank you for visiting!">
+<meta name="twitter:description" content="一颗不服输的螺丝钉">
   
     <link rel="alternative" href="/atom.xml" title="Thank you for visiting!" type="application/atom+xml">
   
@@ -163,192 +160,64 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-dubbo源码精读（一）" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      dubbo源码精读
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2020/04/25/线上排查之-arthas/" class="archive-article-date">
+  	<time datetime="2020-04-25T08:42:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/04/25/线上排查之-arthas/">线上排查之--arthas</a>
     </h1>
   
 
-        
-        <a href="/2019/05/27/dubbo源码精读（一）/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="dubbo源码精读（一）"><a href="#dubbo源码精读（一）" class="headerlink" title="dubbo源码精读（一）"></a>dubbo源码精读（一）</h1><p>dubbo作为java rpc框架中的一员，重要性就不多说了，每次出去跟人交流也总提到这个，虽然项目中一直在用，可却从来没完整的、系统的学习过dubbo。今天开始迈出dubbo第一步：</p>
-<p>关于dubbo的额接本概念解释这里不做过多介绍，可以参考这篇博文,从架构层面理解dubbo:</p>
-<p>dubbo的底层原理：<a href="https://blog.csdn.net/qq_33101675/article/details/78701305" target="_blank" rel="noopener">https://blog.csdn.net/qq_33101675/article/details/78701305</a>    </p>
-<p>下图为我在项目中的dubbo2.5.3jar包目录结构</p>
-<p><img src="/img/dubbo/dir.png" alt="dubbo目录"></p>
-<a id="more"></a>
-<h2 id="hession-包"><a href="#hession-包" class="headerlink" title="hession 包"></a>hession 包</h2><p>dubbo支持多种序列化方式，有dubbo、hessian、java、json、nativejava，（具体下文会介绍），hessian是dubbo默认的序列化方式。</p>
-<p>dubbo这里是直接使用hessian的一个开源实现放到了com.alibaba包下，也即是上图中的con.caucho.hessian包。这个包中主要是io包，hessian对于数据的序列化和反序列化所有实现全部在这里。其余两个包是RSA加密相关和工具类。有兴趣可以参考下，个人认为没有必要深究</p>
-<p>不出意外。序列化的顶级接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.com.caucho.hessian.io;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Serializing an object. </span><br><span class="line"> */</span><br><span class="line">public interface Serializer &#123;</span><br><span class="line">  public void writeObject(Object obj, AbstractHessianOutput out)</span><br><span class="line">    throws IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>hessian序列化的具体实现代码在com.alibaba.com.caucho.hessian.io.Hessian2Output中。这里不在展示源码和贴图，简单来说就是将（byte[]） 数组转换为二进制数据，并写入流中。反序列化则刚好相反，将二进制数据转化字符编码，进而转化为java的数据类型。</p>
-<p>反序列化的顶级接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.com.caucho.hessian.io;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Deserializing an object. </span><br><span class="line"> */</span><br><span class="line">public interface Deserializer &#123;</span><br><span class="line">  public Class getType();</span><br><span class="line"></span><br><span class="line">  public Object readObject(AbstractHessianInput in)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readList(AbstractHessianInput in, int length)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readLengthList(AbstractHessianInput in, int length)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readMap(AbstractHessianInput in)</span><br><span class="line">    throws IOException;</span><br><span class="line">  </span><br><span class="line">  public Object readObject(AbstractHessianInput in, String []fieldNames)</span><br><span class="line">    throws IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="dubbo包"><a href="#dubbo包" class="headerlink" title="dubbo包"></a>dubbo包</h2><p>到这里，才是真正dubbo的核心实现。从前面的图中可以看到，dubbo的实现主要包含这些内容：</p>
-<ol>
-<li><p>cache：本地缓存，缓存服务列表</p>
-</li>
-<li><p>common：资源工具类和注解等，包括io、日志、拓展类、JSON、线程池、各种工具类</p>
-</li>
-<li><p>config：dubbo配置的解析器，包括元注解、xml配置解析器及解析对象的定义，以下代码为xml解析的入口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.dubbo.config.spring.schema;</span><br><span class="line"></span><br><span class="line">import org.springframework.beans.factory.xml.NamespaceHandlerSupport;</span><br><span class="line"></span><br><span class="line">import com.alibaba.dubbo.common.Version;</span><br><span class="line">import com.alibaba.dubbo.config.ApplicationConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ConsumerConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ModuleConfig;</span><br><span class="line">import com.alibaba.dubbo.config.MonitorConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ProtocolConfig;</span><br><span class="line">import com.alibaba.dubbo.config.ProviderConfig;</span><br><span class="line">import com.alibaba.dubbo.config.RegistryConfig;</span><br><span class="line">import com.alibaba.dubbo.config.spring.AnnotationBean;</span><br><span class="line">import com.alibaba.dubbo.config.spring.ReferenceBean;</span><br><span class="line">import com.alibaba.dubbo.config.spring.ServiceBean;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * DubboNamespaceHandler</span><br><span class="line"> * </span><br><span class="line"> * @author william.liangf</span><br><span class="line"> * @export</span><br><span class="line"> */</span><br><span class="line">public class DubboNamespaceHandler extends NamespaceHandlerSupport &#123;</span><br><span class="line"></span><br><span class="line">	static &#123;</span><br><span class="line">		Version.checkDuplicate(DubboNamespaceHandler.class);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void init() &#123;</span><br><span class="line">	    registerBeanDefinitionParser(&quot;application&quot;, new DubboBeanDefinitionParser(ApplicationConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;module&quot;, new DubboBeanDefinitionParser(ModuleConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;registry&quot;, new DubboBeanDefinitionParser(RegistryConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;monitor&quot;, new DubboBeanDefinitionParser(MonitorConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;provider&quot;, new DubboBeanDefinitionParser(ProviderConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;consumer&quot;, new DubboBeanDefinitionParser(ConsumerConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;protocol&quot;, new DubboBeanDefinitionParser(ProtocolConfig.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;service&quot;, new DubboBeanDefinitionParser(ServiceBean.class, true));</span><br><span class="line">        registerBeanDefinitionParser(&quot;reference&quot;, new DubboBeanDefinitionParser(ReferenceBean.class, false));</span><br><span class="line">        registerBeanDefinitionParser(&quot;annotation&quot;, new DubboBeanDefinitionParser(AnnotationBean.class, true));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol start="4">
-<li><p>container：对spring、log4j、logback、servlet等的支持</p>
-</li>
-<li><p>monitor：对provider、consumer的监控和数据统计，核心的实现在类DubboMonitor中</p>
-</li>
-<li><p>registry：服务的注册与发现，其中服务支持redis和zookeeper两种，如果有需要也可以自己实现注册中心，实现registryService和注册工厂即可。zk的注册实现在ZookeeperRegistry中。这也是项目中最常用的注册中心</p>
-</li>
-<li><p>remoting：主要提供了一些远程通信的实现，包括http、p2p、telnet。还集成了zookeeper的客户端</p>
-</li>
-<li><p>rpc：这是dubbo作为一个服务调用框架的核心功能。包含了对集群的处理、监听、通信协议、代理的实现、过滤器、rpc容器与调用等</p>
-</li>
-</ol>
-<p>今天就先到这里，后续对rpc继续写个专题。</p>
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">线上运维</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JVM监控</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
-      
+          
 
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://ccmuyu.github.io/2019/05/27/dubbo源码精读（一）/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2019/05/27/JDK源码精读系列（二）/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          JDK源码精读(二)
-        
-      </div>
-    </a>
   
   
-    <a href="/2019/05/27/java中最常用的几种设计模式/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Java中的设计模式实践</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dubbo源码精读（一）"><span class="toc-number">1.</span> <span class="toc-text">dubbo源码精读（一）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hession-包"><span class="toc-number">1.1.</span> <span class="toc-text">hession 包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dubbo包"><span class="toc-number">1.2.</span> <span class="toc-text">dubbo包</span></a></li></ol></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -371,9 +240,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

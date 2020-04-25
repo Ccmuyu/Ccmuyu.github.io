@@ -162,6 +162,107 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-线上排查之-arthas" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/25/线上排查之-arthas/">线上排查之--arthas</a>
+    </h1>
+  
+
+        
+        <a href="/2020/04/25/线上排查之-arthas/" class="archive-article-date">
+  	<time datetime="2020-04-25T08:42:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>作为一名java 的coder，线上问题的排查是始终绕不过去的坎儿，项目大了，或者项目经手的人多了，很难说哪个地方会不会有个隐形的陷阱等着你。很多问题也只有项目的流量上来了才会发现，好了，废话不多说，上干货！</p>
+<h1 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h1><h2 id="top"><a href="#top" class="headerlink" title="top"></a>top</h2><p>top这个命令除了运维，一般的coder知道的或许并不多。</p>
+<p>这个命令有什么用呢？看效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_15_centos ~]# top</span><br><span class="line">top - 16:50:54 up 18:28,  3 users,  load average: 0.00, 0.01, 0.05</span><br><span class="line">Tasks:  87 total,   2 running,  85 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  1882056 total,   314288 free,   320940 used,  1246828 buff/cache</span><br><span class="line">KiB Swap:        0 total,        0 free,        0 used.  1377012 avail Mem </span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                          </span><br><span class="line">    1 root      20   0   43520   3736   2420 S  0.0  0.2   0:04.16 systemd                          </span><br><span class="line">    2 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kthreadd                         </span><br><span class="line">    4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H                     </span><br><span class="line">    5 root      20   0       0      0      0 S  0.0  0.0   0:04.94 kworker/u2:0                     </span><br><span class="line">    6 root      20   0       0      0      0 S  0.0  0.0   0:00.84 ksoftirqd/0</span><br></pre></td></tr></table></figure>
+<p>从实际结果来看，这里分为了两部分：</p>
+<p>1、系统信息。包括：运行时间，用户，负载，CPU，内存等</p>
+<p>2、线程信息。主要有：线程pid，用户，CPU内存资源使用，所属程序等</p>
+<h2 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h2><p>用法：jinfo [pid]</p>
+<p>显示java程序运行时，所有的系统参数</p>
+<h2 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h2><p>动态观察jvm运行状况</p>
+<p>比如 jstat -gc pid 监控gc情况</p>
+<h2 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h2><p>堆内存查看，可以做堆内存转储，形成dump文件。</p>
+<p>比如：</p>
+<p>jmap - histo 4655 | head -20，查找有多少对象产生</p>
+<p>jmap -dump:format=b,file=xxx pid  </p>
+<p>，jmap执行期间会对进程产生很大影响，甚至卡顿，大流量系统是不合适的。</p>
+<p>可以使用 <strong>MAT</strong> / <strong>jhat</strong> /<strong>jvisualvm</strong> 进行dump文件分析</p>
+<p>这些工具平时开发测试会用到的比较多，但是线上，除了top命令之外，其他可能都没有（openjdk只安装jre是没有的），就算有不能用！！！</p>
+<h1 id="arthas"><a href="#arthas" class="headerlink" title="arthas"></a>arthas</h1><p>正题来了，arthas，阿里开源产品，是个命令行交互工具，本身是一个jar，下载下来就能用（生产环境不一定有权限加进去，允悲！！！）</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> gitee / github</span></span><br><span class="line">[root@VM_0_15_centos arthas]# wget https:/sh/arthas.gitee.io/arthas-boot.jar</span><br><span class="line">--2020-04-25 16:25:19--  https://arthas.gitee.io/arthas-boot.jar</span><br><span class="line">Resolving arthas.gitee.io (arthas.gitee.io)... 212.64.62.174</span><br><span class="line">Connecting to arthas.gitee.io (arthas.gitee.io)|212.64.62.174|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 112288 (110K) [application/java-archive]</span><br><span class="line">Saving to: ‘arthas-boot.jar’</span><br><span class="line"></span><br><span class="line"><span class="meta">100%</span><span class="bash">[===========================================================&gt;] 112,288     --.-K/s   <span class="keyword">in</span> 0.1s    </span></span><br><span class="line"></span><br><span class="line">2020-04-25 16:25:20 (731 KB/s) - ‘arthas-boot.jar’ saved [112288/112288]</span><br></pre></td></tr></table></figure>
+<p>开源地址：<em><a href="https://github.com/alibaba/arthas" target="_blank" rel="noopener">https://github.com/alibaba/arthas</a></em></p>
+<p>官方文档：<em><a href="https://alibaba.github.io/arthas" target="_blank" rel="noopener">https://alibaba.github.io/arthas</a></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> github下载</span></span><br><span class="line">wget https://alibaba.github.io/arthas/arthas-boot.jar</span><br><span class="line"><span class="meta">#</span><span class="bash"> 或者 Gitee 下载</span></span><br><span class="line">wget https://arthas.gitee.io/arthas-boot.jar</span><br></pre></td></tr></table></figure>
+<p>安装如此简单。。。</p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">线上运维</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">JVM监控</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/04/25/线上排查之-arthas/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-apollo架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -214,79 +315,6 @@ var _hmt = _hmt || [];
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/03/22/apollo架构/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-JDK源码精读系列（二）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/27/JDK源码精读系列（二）/">JDK源码精读(二)</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/27/JDK源码精读系列（二）/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="JDK源码精读系列（二）"><a href="#JDK源码精读系列（二）" class="headerlink" title="JDK源码精读系列（二）"></a>JDK源码精读系列（二）</h1>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">JDK源码精读</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/27/JDK源码精读系列（二）/">展开全文 >></a>
         </p>
       
 
@@ -392,6 +420,79 @@ var _hmt = _hmt || [];
 
 
   
+    <article id="post-JDK源码精读系列（二）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/27/JDK源码精读系列（二）/">JDK源码精读(二)</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/27/JDK源码精读系列（二）/" class="archive-article-date">
+  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="JDK源码精读系列（二）"><a href="#JDK源码精读系列（二）" class="headerlink" title="JDK源码精读系列（二）"></a>JDK源码精读系列（二）</h1>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">JDK源码精读</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/27/JDK源码精读系列（二）/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-dubbo源码精读（一）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -430,80 +531,6 @@ var _hmt = _hmt || [];
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/05/27/dubbo源码精读（一）/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-java中最常用的几种设计模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/27/java中最常用的几种设计模式/">Java中的设计模式实践</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/27/java中最常用的几种设计模式/" class="archive-article-date">
-  	<time datetime="2019-05-27T13:42:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Java中最常用的几种设计模式"><a href="#Java中最常用的几种设计模式" class="headerlink" title="Java中最常用的几种设计模式"></a>Java中最常用的几种设计模式</h1><h2 id="1、单例模式"><a href="#1、单例模式" class="headerlink" title="1、单例模式"></a>1、单例模式</h2><p>常见写法：懒汉式、饿汉式、静态代码块、静态内部类、枚举等。推荐采用后3种。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/27/java中最常用的几种设计模式/">展开全文 >></a>
         </p>
       
 
@@ -647,6 +674,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">demo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">线上运维</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">JVM监控</a>
               </li>
              
               <li class="article-tag-list-item">
